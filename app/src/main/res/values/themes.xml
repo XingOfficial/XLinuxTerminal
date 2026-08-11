@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="Theme.XLinuxTerminal" parent="Theme.Material3.Dark.NoActionBar">
+        <item name="colorPrimary">@color/termux_green</item>
+        <item name="colorPrimaryDark">#0D0D0D</item>
+        <item name="android:windowBackground">@color/termux_bg</item>
+    </style>
+</resources>

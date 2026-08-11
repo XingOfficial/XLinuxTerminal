@@ -1,0 +1,15 @@
+R_DEF: Internal format may change without notice
+local
+color black
+color termux_bg
+color termux_green
+color white
+id clear_button
+id command_input
+id output_text
+id run_button
+id scroll_view
+layout activity_main
+mipmap ic_launcher
+string app_name
+style Theme.XLinuxTerminal

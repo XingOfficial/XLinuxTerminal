@@ -1,0 +1,10 @@
+[
+    {
+        "merged": "cn.xing.terminal.xerminal.app-release-32:/mipmap-hdpi_ic_launcher.xml.flat",
+        "source": "cn.xing.terminal.xerminal.app-main-33:/mipmap-hdpi/ic_launcher.xml"
+    },
+    {
+        "merged": "cn.xing.terminal.xerminal.app-release-32:/layout_activity_main.xml.flat",
+        "source": "cn.xing.terminal.xerminal.app-main-33:/layout/activity_main.xml"
+    }
+]

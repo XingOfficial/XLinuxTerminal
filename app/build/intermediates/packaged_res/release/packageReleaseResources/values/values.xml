@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="black">#FF000000</color>
+    <color name="termux_bg">#FF1E1E1E</color>
+    <color name="termux_green">#FF00FF00</color>
+    <color name="white">#FFFFFFFF</color>
+    <string name="app_name">XLinuxTerminal</string>
+    <style name="Theme.XLinuxTerminal" parent="Theme.Material3.Dark.NoActionBar">
+        <item name="colorPrimary">@color/termux_green</item>
+        <item name="colorPrimaryDark">#0D0D0D</item>
+        <item name="android:windowBackground">@color/termux_bg</item>
+    </style>
+</resources>
