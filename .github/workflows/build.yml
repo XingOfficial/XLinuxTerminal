@@ -1,4 +1,4 @@
-name: Build APK
+name: Build Signed APK
 on:
   push:
     branches: [ main ]
@@ -16,15 +16,34 @@ jobs:
         distribution: 'temurin'
     - name: Grant execute permission for gradlew
       run: chmod +x gradlew
-    - name: Build with Gradle
+    - name: Generate debug keystore
+      run: |
+        keytool -genkey -v -keystore debug.keystore -storepass android -alias androiddebugkey -keypass android -keyalg RSA -keysize 2048 -validity 10000 -dname "CN=Android Debug,O=Android,C=US"
+    - name: Build Release APK
       run: ./gradlew assembleRelease
+      env:
+        KEYSTORE_PATH: ${{ github.workspace }}/debug.keystore
+        KEYSTORE_PASSWORD: android
+        KEY_ALIAS: androiddebugkey
+        KEY_PASSWORD: android
+    - name: Sign APK
+      run: |
+        for f in app/build/outputs/apk/release/*.apk; do
+          if [ -f "$f" ]; then
+            jarsigner -verbose -sigalg SHA256withRSA -digestalg SHA-256 -keystore debug.keystore -storepass android "$f" androiddebugkey
+            zipalign -v 4 "$f" "${f%.apk}-aligned.apk"
+            mv "${f%.apk}-aligned.apk" "$f"
+          fi
+        done
     - name: Rename APK with version and date
       run: |
         VERSION=$(grep versionName app/build.gradle.kts | sed 's/.*"\(.*\)".*/\1/')
         DATE=$(date +%Y%m%d_%H%M%S)
         mkdir -p app/build/outputs/apk/release/renamed
         for f in app/build/outputs/apk/release/*.apk; do
-          cp "$f" "app/build/outputs/apk/release/renamed/XLinuxTerminal_v${VERSION}_${DATE}.apk"
+          if [ -f "$f" ] && [[ "$f" != *"unaligned"* ]]; then
+            cp "$f" "app/build/outputs/apk/release/renamed/XLinuxTerminal_v${VERSION}_${DATE}.apk"
+          fi
         done
     - name: Upload APK
       uses: actions/upload-artifact@v4
