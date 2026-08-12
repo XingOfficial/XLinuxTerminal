@@ -2,8 +2,6 @@ name: Build Signed APK
 on:
   push:
     branches: [ main ]
-  pull_request:
-    branches: [ main ]
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -14,31 +12,30 @@ jobs:
       with:
         java-version: '17'
         distribution: 'temurin'
-    - name: Setup Android SDK
-      uses: android-actions/setup-android@v3
     - name: Grant execute permission for gradlew
       run: chmod +x gradlew
     - name: Build Release APK
       run: ./gradlew assembleRelease
     - name: Sign APK with release key
+      env:
+        KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
+        KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+        KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
       run: |
-        echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 -d > xlinux.keystore
+        echo "$KEYSTORE_BASE64" | base64 -d > xlinux.keystore
         for f in app/build/outputs/apk/release/*.apk; do
           if [ -f "$f" ] && [[ "$f" != *"unaligned"* ]]; then
-            apksigner sign --ks xlinux.keystore --ks-pass pass:${{ secrets.KEYSTORE_PASSWORD }} --key-pass pass:${{ secrets.KEY_PASSWORD }} --in "$f" --out "${f%.apk}-signed.apk"
-            zipalign -v 4 "${f%.apk}-signed.apk" "${f%.apk}-aligned.apk"
-            mv "${f%.apk}-aligned.apk" "$f"
-            rm -f "${f%.apk}-signed.apk"
+            jarsigner -verbose -sigalg SHA256withRSA -digestalg SHA-256 -keystore xlinux.keystore -storepass "$KEYSTORE_PASSWORD" -keypass "$KEY_PASSWORD" "$f" xlinux
           fi
         done
         rm -f xlinux.keystore
-    - name: Rename APK with version and date
+    - name: Rename APK
       run: |
         VERSION=$(grep versionName app/build.gradle.kts | sed 's/.*"\(.*\)".*/\1/')
         DATE=$(date +%Y%m%d_%H%M%S)
         mkdir -p app/build/outputs/apk/release/renamed
         for f in app/build/outputs/apk/release/*.apk; do
-          if [ -f "$f" ] && [[ "$f" != *"unaligned"* ]] && [[ "$f" != *"signed"* ]]; then
+          if [ -f "$f" ] && [[ "$f" != *"unaligned"* ]]; then
             cp "$f" "app/build/outputs/apk/release/renamed/XLinuxTerminal_v${VERSION}_${DATE}.apk"
           fi
         done

@@ -1,1 +1,16 @@
+.gradle/
+build/
+!gradle/wrapper/gradle-wrapper.jar
+local.properties
+.idea/
+*.iml
+.DS_Store
+Thumbs.db
 update_all.sh
+build_xlinux.sh
+push_github.sh
+push_github_rename.sh
+*.sh
+*.keystore
+*.jks
+app/build/
