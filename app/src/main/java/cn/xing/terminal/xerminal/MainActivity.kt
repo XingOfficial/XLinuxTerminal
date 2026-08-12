@@ -7,6 +7,8 @@ import android.widget.ScrollView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
+import com.termux.terminal.TerminalSession
+import com.termux.view.TerminalView
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -16,6 +18,7 @@ import java.io.File
 
 class MainActivity : AppCompatActivity() {
 
+    private lateinit var terminalView: TerminalView
     private lateinit var outputText: TextView
     private lateinit var commandInput: EditText
     private lateinit var scrollView: ScrollView
@@ -26,6 +29,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        terminalView = findViewById(R.id.terminal_view)
         outputText = findViewById(R.id.output_text)
         commandInput = findViewById(R.id.command_input)
         scrollView = findViewById(R.id.scroll_view)
@@ -56,6 +60,7 @@ class MainActivity : AppCompatActivity() {
         }
         appendOutput("XLinuxTerminal v1.0")
         appendOutput("====================")
+        appendOutput("Termux 终端库已集成")
         appendOutput("环境初始化完成...")
         appendOutput("支持命令: ls, pwd, echo, cat, mkdir, touch, whoami")
         appendOutput("输入命令后点击运行")
